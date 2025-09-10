@@ -1,0 +1,11 @@
+<h1><%= @movie.title %></h1>
+<p><%= @movie.description %></p>
+
+<h2>Shows</h2>
+<ul>
+  <% @shows.each do |show| %>
+    <li>
+      <%= link_to show.start_time.strftime("%d %b %Y, %I:%M %p"), show_path(show) %>
+    </li>
+  <% end %>
+</ul>

@@ -1,0 +1,34 @@
+<h1>Available Movies</h1>
+
+<% if user_signed_in? %>
+  <p>Welcome, <%= current_user.email %>!</p>
+
+  <!-- ✅ Fixed logout (DELETE request instead of GET) -->
+  <%= button_to "Log out",
+                destroy_user_session_path,
+                method: :delete,
+                form: { class: "d-inline" },
+                class: "btn btn-danger",
+                data: { confirm: "Are you sure you want to log out?" } %>
+<% else %>
+  <%= link_to "Sign up", new_user_registration_path, class: "btn btn-primary" %> |
+  <%= link_to "Log in", new_user_session_path, class: "btn btn-secondary" %>
+<% end %>
+
+<hr>
+
+<% if @movies.present? %>
+  <% @movies.each do |movie| %>
+    <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+      <h2><%= movie.title %></h2>
+      <p><strong>Description:</strong> <%= movie.description || "No description" %></p>
+      <p><strong>Language:</strong> <%= movie.language || "N/A" %></p>
+      <p><strong>Genre:</strong> <%= movie.genre || "Unknown" %></p>
+      <p><strong>Duration:</strong> <%= movie.duration.present? ? "#{movie.duration} mins" : "N/A" %></p>
+
+      <%= link_to "View Shows", movie_shows_path(movie), class: "btn btn-primary" %>
+    </div>
+  <% end %>
+<% else %>
+  <p>No movies available yet.</p>
+<% end %>

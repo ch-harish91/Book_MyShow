@@ -1,0 +1,42 @@
+<h1><%= @movie.title %> - Show Details</h1>
+
+<p><strong>Theatre:</strong> <%= @show.theatre.name %></p>
+<p><strong>Start Time:</strong> <%= @show.start_time.strftime("%d %b %Y %I:%M %p") %></p>
+<p><strong>End Time:</strong> <%= @show.end_time.strftime("%d %b %Y %I:%M %p") %></p>
+<p><strong>Ticket Price:</strong> ₹<%= @show.ticket_price %></p>
+
+<h2 class="mt-4">Seats</h2>
+<table class="table table-bordered table-striped">
+  <thead class="table-light">
+    <tr>
+      <th>Seat Number</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @show.seats.each do |seat| %>
+      <tr>
+        <td><%= seat.seat_number %></td>
+        <td>
+          <% if seat.available? %>
+            <span class="text-success fw-bold">Available</span>
+          <% else %>
+            <span class="text-danger fw-bold">Booked</span>
+          <% end %>
+        </td>
+        <td>
+          <% if seat.available? %>
+            <%= button_to "Book",
+                  book_movie_show_seat_path(@movie, @show, seat),
+                  method: :patch,
+                  class: "btn btn-sm btn-primary",
+                  data: { confirm: "Confirm booking for Seat #{seat.seat_number}?" } %>
+          <% else %>
+            <span class="text-muted">—</span>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

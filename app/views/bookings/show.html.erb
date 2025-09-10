@@ -1,0 +1,15 @@
+<h2>Booking Details</h2>
+
+<p><strong>Movie:</strong> <%= @booking.show.movie.title %></p>
+<p><strong>Theatre:</strong> <%= @booking.show.theatre.name %></p>
+<p><strong>Show Time:</strong> <%= @booking.show.start_time.strftime("%d %b %Y %I:%M %p") %></p>
+<p><strong>Seat Number:</strong> <%= @booking.seat&.seat_number || "N/A" %></p>
+<p><strong>Status:</strong> <%= @booking.status.capitalize %></p>
+<p><strong>Total Price:</strong> ₹<%= @booking.total_price %></p>
+
+<%= link_to "Back to My Bookings", bookings_path %>
+<% if @booking.status != "cancelled" %>
+  | <%= link_to "Cancel Booking", booking_path(@booking), 
+                method: :delete, 
+                data: { confirm: "Are you sure you want to cancel this booking?" } %>
+<% end %>

@@ -1,0 +1,34 @@
+<h1>Shows for <%= @movie.title %></h1>
+
+<% if @shows.any? %>
+  <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: center;">
+    <thead style="background-color: #f2f2f2;">
+      <tr>
+        <th>Theatre</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Price (₹)</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @shows.each do |show| %>
+        <tr>
+          <td><%= show.theatre.name %> (<%= show.theatre.location %>)</td>
+          <td><%= show.start_time.strftime("%d %b %Y %I:%M %p") %></td>
+          <td><%= show.end_time.strftime("%d %b %Y %I:%M %p") %></td>
+          <td><%= number_to_currency(show.ticket_price, unit: "₹") %></td>
+          <td>
+            <%= link_to "View Seats", movie_show_path(@movie, show), class: "btn btn-primary" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No shows available for this movie.</p>
+<% end %>
+
+<br>
+
+<%= link_to "Back to Movies", movies_path, class: "btn btn-secondary" %>
