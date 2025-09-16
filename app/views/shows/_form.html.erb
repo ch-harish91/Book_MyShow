@@ -1,0 +1,35 @@
+<%= form_with(model: [@movie, @show], local: true) do |form| %>
+
+  <% if @show.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(@show.errors.count, "error") %> prohibited this show from being saved:</h4>
+      <ul>
+        <% @show.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :theatre_id, "Select Theatre", class: "form-label" %>
+    <%= form.collection_select :theatre_id, Theatre.all, :id, :name, prompt: "Choose a theatre", class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :start_time, class: "form-label" %>
+    <%= form.datetime_select :start_time, {}, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :end_time, class: "form-label" %>
+    <%= form.datetime_select :end_time, {}, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :ticket_price, "Ticket Price", class: "form-label" %>
+    <%= form.number_field :ticket_price, step: 0.01, class: "form-control" %>
+  </div>
+
+  <%= form.submit "Create Show", class: "btn btn-primary" %>
+<% end %>

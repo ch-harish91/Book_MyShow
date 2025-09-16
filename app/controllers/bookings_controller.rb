@@ -3,7 +3,7 @@ class BookingsController < ApplicationController
   before_action :set_booking, only: [ :show, :update, :destroy ]
   before_action :authorize_booking, only: [ :show, :update, :destroy ]
 
-  # GET /bookings (my bookings)
+  # GET /bookings (My Bookings)
   def index
     @bookings = current_user.bookings.includes(show: [ :movie, :theatre ], seat: :show)
   end
@@ -19,23 +19,26 @@ class BookingsController < ApplicationController
     show = Show.find(booking_params[:show_id])
 
     if seat.available?
-      @booking = Booking.create!(
-        user: current_user,
+      @booking = current_user.bookings.new(
         show: show,
         seat: seat,
         seat_number: seat.seat_number,
         total_price: show.ticket_price,
-        seats_booked: 1
+        seats_booked: 1,
+        status: "confirmed"
       )
 
-      seat.update!(status: "booked", user_id: current_user.id)
-
-      redirect_to bookings_path, notice: "Seat #{seat.seat_number} booked successfully!"
+      if @booking.save
+        seat.update!(status: "booked", user_id: current_user.id)
+        redirect_to bookings_path, notice: "Seat #{seat.seat_number} booked successfully!"
+      else
+        redirect_to movie_show_path(show.movie, show), alert: @booking.errors.full_messages.to_sentence
+      end
     else
       redirect_to movie_show_path(show.movie, show), alert: "Sorry, this seat is already booked."
     end
-  rescue ActiveRecord::RecordInvalid => e
-    redirect_to shows_path, alert: e.message
+  rescue ActiveRecord::RecordNotFound
+    redirect_to shows_path, alert: "Show or seat not found"
   end
 
   # PATCH/PUT /bookings/:id
@@ -43,20 +46,17 @@ class BookingsController < ApplicationController
     if @booking.update(booking_params.except(:user_id))
       redirect_to booking_path(@booking), notice: "Booking updated successfully!"
     else
-      redirect_to bookings_path, alert: "Update failed"
+      redirect_to bookings_path, alert: @booking.errors.full_messages.to_sentence
     end
   end
 
   # DELETE /bookings/:id
   def destroy
     if @booking.status != "cancelled"
-      # Release seat if attached
-      if @booking.seat.present?
-        @booking.seat.update(status: "available", user_id: nil)
+      @booking.transaction do
+        @booking.seat.update!(status: "available", user_id: nil) if @booking.seat.present?
+        @booking.update!(status: "cancelled")
       end
-
-      # Mark booking as cancelled (soft delete)
-      @booking.update(status: "cancelled")
       notice_message = "Booking cancelled and seat released"
     else
       notice_message = "Booking was already cancelled"

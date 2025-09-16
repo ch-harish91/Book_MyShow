@@ -1,5 +1,5 @@
 class SeatsController < ApplicationController
-  before_action :authenticate_user!   # User must be logged in
+  before_action :authenticate_user!
   before_action :set_show
   before_action :set_seat, only: [ :book ]
 
@@ -10,19 +10,18 @@ class SeatsController < ApplicationController
 
   # PATCH /shows/:show_id/seats/:id/book
   def book
-    if @seat.booked?
+    if @seat.status == "booked"  # Or use @seat.booked? if you have a method
       flash[:alert] = "Seat #{@seat.seat_number} is already booked!"
     else
       ActiveRecord::Base.transaction do
-        # 1️⃣ Create a booking record
         Booking.create!(
           user: current_user,
           show: @show,
           seat: @seat
         )
 
-        # 2️⃣ Update seat availability
-        @seat.update!(available: false)
+        # ✅ Update seat status instead of `available`
+        @seat.update!(status: "booked")
       end
 
       flash[:notice] = "Seat #{@seat.seat_number} booked successfully!"

@@ -1,17 +1,19 @@
-<h1><%= @movie.title %> - Show Details</h1>
+<h1 class="mb-3"><%= @movie.title %> - Show Details</h1>
 
-<p><strong>Theatre:</strong> <%= @show.theatre.name %></p>
-<p><strong>Start Time:</strong> <%= @show.start_time.strftime("%d %b %Y %I:%M %p") %></p>
-<p><strong>End Time:</strong> <%= @show.end_time.strftime("%d %b %Y %I:%M %p") %></p>
-<p><strong>Ticket Price:</strong> ₹<%= @show.ticket_price %></p>
+<div class="mb-4">
+  <p><strong>Theatre:</strong> <%= @show.theatre.name %></p>
+  <p><strong>Start Time:</strong> <%= @show.start_time.strftime("%d %b %Y %I:%M %p") %></p>
+  <p><strong>End Time:</strong> <%= @show.end_time.strftime("%d %b %Y %I:%M %p") %></p>
+  <p><strong>Ticket Price:</strong> <span class="fw-bold text-primary">₹<%= @show.ticket_price %></span></p>
+</div>
 
-<h2 class="mt-4">Seats</h2>
-<table class="table table-bordered table-striped">
-  <thead class="table-light">
+<h2 class="mb-3">Seats</h2>
+<table class="table table-bordered table-hover shadow-sm">
+  <thead class="table-dark">
     <tr>
-      <th>Seat Number</th>
-      <th>Status</th>
-      <th>Action</th>
+      <th scope="col">Seat Number</th>
+      <th scope="col">Status</th>
+      <th scope="col" class="text-center">Action</th>
     </tr>
   </thead>
   <tbody>
@@ -20,12 +22,12 @@
         <td><%= seat.seat_number %></td>
         <td>
           <% if seat.available? %>
-            <span class="text-success fw-bold">Available</span>
+            <span class="badge bg-success">Available</span>
           <% else %>
-            <span class="text-danger fw-bold">Booked</span>
+            <span class="badge bg-danger">Booked</span>
           <% end %>
         </td>
-        <td>
+        <td class="text-center">
           <% if seat.available? %>
             <%= button_to "Book",
                   book_movie_show_seat_path(@movie, @show, seat),

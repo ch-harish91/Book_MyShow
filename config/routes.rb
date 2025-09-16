@@ -11,7 +11,8 @@ Rails.application.routes.draw do
 
   # Movies → Shows → Seats (nested flow)
   resources :movies do
-    resources :shows, only: [ :index, :show, :new, :create ] do
+    #  Full CRUD for shows (no `only:` restriction)
+    resources :shows do
       resources :seats, only: [ :index ] do
         patch :book, on: :member   # seat booking
       end
@@ -20,17 +21,17 @@ Rails.application.routes.draw do
 
   # Theatres → Shows
   resources :theatres do
-    resources :shows, only: [ :index, :show, :new, :create ]
+    resources :shows
   end
 
   # Direct Shows access (not nested under movies)
-  resources :shows, only: [ :index, :show ] do
+  resources :shows do
     resources :seats, only: [ :index ] do
       patch :book, on: :member
     end
   end
 
-  # ✅ Global Bookings (user-specific list & cancel)
+  #  Global Bookings (user-specific list & cancel)
   resources :bookings, only: [ :index, :show, :destroy ]
   get "/my_bookings", to: "bookings#index", as: "my_bookings"
 

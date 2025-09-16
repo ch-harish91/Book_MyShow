@@ -23,23 +23,21 @@
         font-weight: bold;
         color: #fff;
       }
-      .flash.notice { background-color: #28a745; } /* green */
-      .flash.alert { background-color: #dc3545; }  /* red */
+      .flash.notice { background-color: #28a745; } /* Green for success */
+      .flash.alert  { background-color: #dc3545; } /* Red for error */
     </style>
   </head>
 
   <body class="container mt-4">
     <!-- Header / Navbar -->
     <header class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h2 class="h5">BookMyShow</h2>
-      </div>
+      <h2 class="h5 m-0">BookMyShow</h2>
 
       <div>
         <% if user_signed_in? %>
-          <span class="me-2">Hi, <%= current_user.name %></span>
+          <span class="me-2">Hi, <%= current_user.name || current_user.email %></span>
 
-          <!-- ✅ Correct logout (DELETE request for Devise) -->
+          <!-- ✅ Correct Devise logout using DELETE -->
           <%= button_to "Logout",
                 destroy_user_session_path,
                 method: :delete,
